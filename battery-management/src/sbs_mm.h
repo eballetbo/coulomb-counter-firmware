@@ -68,6 +68,7 @@
 #define SBS_CURRENT_NOW				0x72	/* Current now, 2 bytes */
 #define SBS_BATTERY_STATUS			0x74	/* Battery Status, 2 bytes */
 #define SBS_STATE_OF_CHARGE			0x76	/* State of Charge in percentage, 1 byte */
+#define SBS_FIRMWARE_VERSION		0x7d	/* Firmware version, 1 byte */
 
 extern volatile uint8_t memory_map[SBS_MEMORY_MAP_SIZE];
 

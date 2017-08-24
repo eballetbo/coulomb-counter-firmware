@@ -46,11 +46,14 @@
 #ifndef SBS_H_
 #define SBS_H_
 
+#define _VERSION_	1
+
 void update_voltage_now(void);
 void update_current_now(void);
 void update_cycle_count(void);
 void update_battery_status(void);
 void update_remaining_capacity(void);
+void update_firmware_version(void);
 
 uint16_t read_voltage_now(void);
 int16_t read_current_now(void);

@@ -38,8 +38,6 @@
 #include "sbs_mm.h"
 #include "sbs_spi.h"
 
-#define _VERSION_	"1"
-
 /* Globals */
 static bool is_in_test_mode = false;
 
@@ -113,8 +111,8 @@ int main(void)
 	cpu_irq_enable();
 
 	printf("\x0C\n\r-- TCL Battery Coulomb Counter --\n\r");
-	printf("-- Version: %s --\n\r", _VERSION_);
-	/* printf("-- Version: %s (build %s) --\n\r", _VERSION_, __TIMESTAMP__); */
+	printf("-- Version: %d --\n\r", _VERSION_);
+	/* printf("-- Version: %d (build %s) --\n\r", _VERSION_, __TIMESTAMP__); */
 	printf("\r\nPress 'd' to enter in test mode\n\r");
 
 	/* Do the ADC current sense calibration process */

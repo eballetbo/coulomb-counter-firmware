@@ -112,6 +112,18 @@ void update_cycle_count(void)
 }
 
 /**
+ * \brief Write the firmware version to the memory map.
+ */
+void update_firmware_version(void)
+{
+	uint8_t version;
+
+	version = (uint8_t)_VERSION_;
+
+	mm_write(SBS_FIRMWARE_VERSION, &version, sizeof(uint8_t));
+}
+
+/**
  * \brief Returns the voltage value measurement.
  */
 uint16_t read_voltage_now(void)
@@ -423,6 +435,7 @@ void update_memory_map(void)
 	update_battery_status();
 	update_remaining_capacity();
 	update_cycle_count();
+	update_firmware_version();
 
 	/* Recalculate the checksum of current memory map */
 	for (addr = 0; addr < SBS_MEMORY_MAP_CSUM_MSB_bp; addr++) {

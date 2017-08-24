@@ -75,6 +75,7 @@
  *	0x72 - 0x73 : Current now
  *	0x74 - 0x75 : Battery status
  *  0x76        : State of charge
+ *  0x7d        : Firmware version
  *  0x7e - 0x7f : Data Checksum
  */
 volatile uint8_t memory_map[SBS_MEMORY_MAP_SIZE] = {
