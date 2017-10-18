@@ -147,19 +147,25 @@ int8_t mm_write(uint8_t address, const void* buf, uint8_t len)
 	
 	for (i = 0; i < len; i++) {
 		if (address < SBS_MEMORY_MAP_NVM_SIZE) {
-			/* NVM write */
-			mm_nvm_write_byte(address + i, ((uint8_t *)buf)[i]);
-			/* Read back and update memory map (cached) */
+			/* Read data to check if is already written */
 			data = mm_nvm_read_byte(address + i);
-			/* Verify that data was written */
+			/* Only write data if is different */
 			if (data != ((uint8_t *)buf)[i]) {
-				printf("ERROR: Failed to verify data written to NVM (0x%02x != 0x%02x)\r\n", data, ((uint8_t *)buf)[i]);
-				return -EINVAL;
+				/* NVM write */
+				mm_nvm_write_byte(address + i, ((uint8_t *)buf)[i]);
+				/* Read back and update memory map (cached) */
+				data = mm_nvm_read_byte(address + i);
+				/* Verify that data was written */
+				if (data != ((uint8_t *)buf)[i])
+					printf("ERROR: Failed to verify data written to NVM at address 0x%02x (0x%02x != 0x%02x)\r\n",
+						   address, data, ((uint8_t *)buf)[i]);
 			}
+		} else {
+			data = ((uint8_t *)buf)[i];
 		}
 		/* Update value in cached Memory Map */
 		/* printf("DEBUG: Writing at address 0x%02x value 0x%02x\r\n", address + i, ((uint8_t *)buf)[i]); */
-		memory_map[address + i] = ((uint8_t *)buf)[i];
+		memory_map[address + i] = data;
 	}
 
 	return 0;
