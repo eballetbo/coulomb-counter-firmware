@@ -164,7 +164,6 @@ int8_t mm_write(uint8_t address, const void* buf, uint8_t len)
 			data = ((uint8_t *)buf)[i];
 		}
 		/* Update value in cached Memory Map */
-		/* printf("DEBUG: Writing at address 0x%02x value 0x%02x\r\n", address + i, ((uint8_t *)buf)[i]); */
 		memory_map[address + i] = data;
 	}
 
@@ -262,16 +261,12 @@ static void nvm_at24_program_default_values(void)
 
 	nvm_at24_twi_init();
 
-	//while (twi_master_write(&TWIC, &packet_write) != TWI_SUCCESS);
-	//twi_master_write(&TWIC, &packet_write);
-
 	_delay_ms(500);
 
-	// Perform a multi-byte read access then check the result.
+	/* Perform a multi-byte read access then check the result. */
 	twi_master_read(&TWIC, &packet_read);
 
-	//if(twi_master_read(&TWIC, &packet_read) == TWI_SUCCESS){
-	//Check read content
+	/* Check read content */
 	if (data_received[0] == 0x55) {
 		printf("Read data from EEPROM: ");
 		for (i = 0; i < 10; i++)
@@ -280,7 +275,6 @@ static void nvm_at24_program_default_values(void)
 		} else {
 		printf("Failed to verify EEPROM data");
 	}
-	//}
 
 	/* Enable AT24 EEPROM write protect*/
 	ioport_set_pin_level(CONF_PIN_AT24_WP, 1);
