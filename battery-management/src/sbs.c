@@ -66,9 +66,6 @@ static uint32_t time_to_empty = 0;
 /* Time for a complete charge cycle */
 static uint32_t time_to_full = 0;
 
-/* Flag that indicates that a complete battery charged cycle was done */
-static bool has_fully_charged = false;
-
 /*
  * Flag to indicate that the current battery state is not known so we do
  * a voltage estimation for capacity.
