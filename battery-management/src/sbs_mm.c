@@ -153,7 +153,7 @@ int8_t mm_write(uint8_t address, const void* buf, uint8_t len)
 			data = mm_nvm_read_byte(address + i);
 			/* Verify that data was written */
 			if (data != ((uint8_t *)buf)[i]) {
-				printf("ERROR: Failed to verify data written to NVM (0x%02x != 0x%02x)", data, ((uint8_t *)buf)[i]);
+				printf("ERROR: Failed to verify data written to NVM (0x%02x != 0x%02x)\r\n", data, ((uint8_t *)buf)[i]);
 				return -EINVAL;
 			}
 		}
@@ -212,12 +212,12 @@ void mm_dump(void)
 {
 	uint8_t i, value;
 
-	printf("Memory Map:\n\r");
+	printf("Memory Map:\r\n");
 	for (i = 0; i < SBS_MEMORY_MAP_SIZE; i++) {
 		mm_read(i, &value, 1);
 		printf("{ 0x%02x, 0x%02x }, ", i, value);
 	}
-	printf("\n\r");
+	printf("\r\n");
 }
 
 #ifdef AT24_EEPROM
@@ -270,7 +270,7 @@ static void nvm_at24_program_default_values(void)
 		printf("Read data from EEPROM: ");
 		for (i = 0; i < 10; i++)
 		printf("0x%02x ", data_received[i]);
-		printf("\n\r");
+		printf("\r\n");
 		} else {
 		printf("Failed to verify EEPROM data");
 	}

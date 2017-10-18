@@ -448,5 +448,5 @@ void update_memory_map(void)
 
 	printf("INFO: Voltage: %4d mV (0x%04x)\r\n", read_voltage_now(), read_voltage_now());
 	printf("INFO: Current: %4d mA (0x%04x)\r\n", read_current_now(), read_current_now());
-	printf("INFO: Timestamp: %ld\n\r", rtc_get_time());		
+	printf("INFO: Timestamp: %ld\r\n", rtc_get_time());
 }

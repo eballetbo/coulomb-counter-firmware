@@ -64,12 +64,12 @@ static void do_toggle_output_pins(void)
  */
 static void enter_test_mode(void)
 {
-	printf("\n\rWelcome to the test mode. Press\n\r");
-	printf(" - key 'q' to exit from test mode\n\r");
-	printf(" - key 'd' to dump the Memory Map contents\n\r");
-	printf(" - key 'e' to erase Memory Map\n\r");
-	printf(" - key 'p' to program default Memory Map\n\r");
-	printf(" - key 't' to toggle output pins\n\r");
+	printf("\n\rWelcome to the test mode. Press\r\n");
+	printf(" - key 'q' to exit from test mode\r\n");
+	printf(" - key 'd' to dump the Memory Map contents\r\n");
+	printf(" - key 'e' to erase Memory Map\r\n");
+	printf(" - key 'p' to program default Memory Map\r\n");
+	printf(" - key 't' to toggle output pins\r\n");
 
 	while (is_in_test_mode) {
 		if (usart_rx_is_complete(USART_SERIAL_DEBUG)) {
@@ -110,10 +110,10 @@ int main(void)
 	/* Enable global interrupt */
 	cpu_irq_enable();
 
-	printf("\x0C\n\r-- TCL Battery Coulomb Counter --\n\r");
-	printf("-- Version: %d --\n\r", _VERSION_);
+	printf("\x0C\n\r-- TCL Battery Coulomb Counter --\r\n");
+	printf("-- Version: %d --\r\n", _VERSION_);
 	/* printf("-- Version: %d (build %s) --\n\r", _VERSION_, __TIMESTAMP__); */
-	printf("\r\nPress 'd' to enter in test mode\n\r");
+	printf("\r\nPress 'd' to enter in test mode\r\n");
 
 	/* Do the ADC current sense calibration process */
 	do_current_sense_calibration();
@@ -131,8 +131,12 @@ int main(void)
 			}
 		}
 
+		/* Don't allow interrupts while memory map is updating */
+		cpu_irq_disable();
 		/* Update memory map with current data */
 		update_memory_map();
+		/* Re-enable the interrupts */
+		cpu_irq_enable();
 
 		_delay_ms(1000);
 	}
