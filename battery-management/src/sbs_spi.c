@@ -62,8 +62,10 @@ ISR(SPIC_INT_vect) {
 	/* If the master tries to read over the map size return a dummy byte */
 	if (addr >= SBS_MEMORY_MAP_SIZE)
 		SPIC.DATA = SPI_DUMMY_BYTE;
-	/* Send the value to the master */
-	SPIC.DATA = memory_map[addr];
+	else {
+		/* Send the value to the master */
+		SPIC.DATA = memory_map[addr];
+	}
 }
 
 /** 
