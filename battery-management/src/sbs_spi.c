@@ -60,9 +60,9 @@ ISR(SPIC_INT_vect) {
 	/* Grab the address */
 	addr = SPIC.DATA;
 	/* If the master tries to read over the map size return a dummy byte */
-	if (addr >= SBS_MEMORY_MAP_SIZE)
+	if (addr >= SBS_MEMORY_MAP_SIZE) {
 		SPIC.DATA = SPI_DUMMY_BYTE;
-	else {
+	} else {
 		/* Send the value to the master */
 		SPIC.DATA = memory_map[addr];
 	}
