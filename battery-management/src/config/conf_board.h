@@ -11,7 +11,7 @@
 #ifndef CONF_BOARD_H
 #define CONF_BOARD_H
 
-#define F_CPU	2000000UL
+#define F_CPU	32000000UL
 #define CONF_BOARD_ENABLE_USARTC0
 
 /* Board PINS */
