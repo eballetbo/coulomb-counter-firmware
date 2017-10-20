@@ -270,13 +270,13 @@ void update_remaining_capacity(void)
 				rem_capacity = 0;
 			/* At this point, check if rem_capacity is a valid value */
 			if (rem_capacity > 100) {
-				printf("WARN: Remaining capacity out of range: %d. Setting to 100\r\n", rem_capacity);
+				pr_debug("WARN: Remaining capacity out of range: %d. Setting to 100\r\n", rem_capacity);
 				rem_capacity = 100;
 			} else if (rem_capacity < 0) {
-				printf("WARN: Remaining capacity out of range: %d. Setting to 0\r\n", rem_capacity);
+				pr_debug("WARN: Remaining capacity out of range: %d. Setting to 0\r\n", rem_capacity);
 				rem_capacity = 0;
 			}
-			printf("INFO: Remaining capacity: %d (voltage estimated)\r\n", rem_capacity);
+			pr_debug("INFO: Remaining capacity: %d (voltage estimated)\r\n", rem_capacity);
 		} else {
 			if (current_acc > millicoulombs)
 				rem_capacity = 100;
@@ -289,7 +289,7 @@ void update_remaining_capacity(void)
 			if (rem_capacity > 100)
 				rem_capacity = 100;
 
-			printf("INFO: Remaining capacity: %d (accumulated current: %ld)\r\n", rem_capacity, current_acc);
+			pr_debug("INFO: Remaining capacity: %d (accumulated current: %ld)\r\n", rem_capacity, current_acc);
 		}
 	}
 
@@ -319,7 +319,7 @@ void update_battery_status(void)
 		/* TODO: re-calc coulombs */
 		millicoulombs = (capacity * 70L / 100L) * 3600L;
 		current_acc = millicoulombs;
-		printf("Total Battery Energy: %ld\r\n", millicoulombs);
+		pr_debug("Total Battery Energy: %ld\r\n", millicoulombs);
 		voltage_estimation = false;
 	} else if (is_fully_discharged()) {
 		status = FULLY_DISCHARGED;
@@ -330,23 +330,23 @@ void update_battery_status(void)
 		current_acc -= current;
 		if (current_acc < 0)
 			current_acc = 0;
-		printf("INFO: Energy counter: %ld\r\n", current_acc);
+		pr_debug("INFO: Energy counter: %ld\r\n", current_acc);
 	} else {
 		status = CHARGING;
 		current_acc -= current;	/* negative number */
 		if (current_acc > millicoulombs)
 			current_acc = millicoulombs;
-		printf("INFO: Energy counter: %ld\r\n", current_acc);
+		pr_debug("INFO: Energy counter: %ld\r\n", current_acc);
 	}
 
 	if (status_old == FULLY_DISCHARGED)
-		printf("INFO: FULLY_DISCHARGED\r\n");
+		pr_debug("INFO: FULLY_DISCHARGED\r\n");
 	else if (status_old == FULLY_CHARGED)
-		printf("INFO: FULLY_CHARGED\r\n");
+		pr_debug("INFO: FULLY_CHARGED\r\n");
 	else if (status_old == CHARGING)
-		printf("INFO: CHARGING\r\n");
+		pr_debug("INFO: CHARGING\r\n");
 	else if (status_old == DISCHARGING)
-		printf("INFO: DISCHARGING\r\n");
+		pr_debug("INFO: DISCHARGING\r\n");
 
 	/*
 	 * Update the status if changed. State handling
@@ -358,42 +358,42 @@ void update_battery_status(void)
 			/* 
 			 * FULLY_CHARGED -> DISCHARGING
 			 */
-			printf("INFO: FULLY_CHARGED -> DISCHARGING\r\n");	
+			pr_debug("INFO: FULLY_CHARGED -> DISCHARGING\r\n");
 			/* Start up the RTC again and start counting from 0 the discharge time */
 			rtc_init();
 		} else if ((status_old == DISCHARGING) && (status == FULLY_DISCHARGED)) {
 			/*
 			 * DISCHARGING -> FULLY_DISCHARGED
 			 */
-			printf("INFO: DISCHARGING -> FULLY_DISCHARGED\r\n");
+			pr_debug("INFO: DISCHARGING -> FULLY_DISCHARGED\r\n");
 			/* Store the time to reach the fully discharged state */
 			time_to_empty = rtc_get_time();
 		} else if ((status_old == FULLY_DISCHARGED) && (status == CHARGING)) {
 			/*
 			 * FULLY_DISCHARGED -> CHARGING
 			 */
-			printf("INFO: FULLY_DISCHARGED -> CHARGING\r\n");
+			pr_debug("INFO: FULLY_DISCHARGED -> CHARGING\r\n");
 			/* Start up the RTC again and start counting from 0 the charge time */
 			rtc_init();
 		} else if ((status_old == CHARGING) && (status == FULLY_CHARGED)) {
 			/*
 			 * CHARGING -> FULLY_CHARGED
 			 */
-			printf("INFO: CHARGING -> FULLY_CHARGED\r\n");
+			pr_debug("INFO: CHARGING -> FULLY_CHARGED\r\n");
 			time_to_full = rtc_get_time(); /* Store the time to reach the fully charged state */
 		} else if ((status_old == CHARGING) && (status == DISCHARGING)) {
 			/*
 			 * CHARGING -> DISCHARGING
 			 */
-			printf("INFO: CHARGING -> DISCHARGING\r\n");
+			pr_debug("INFO: CHARGING -> DISCHARGING\r\n");
 		} else if ((status_old == DISCHARGING) && (status == CHARGING)) {
 			/*
 			 * DISCHARGING -> CHARGING
 			 */
-			printf("INFO: DISCHARGING -> CHARGING\r\n");
+			pr_debug("INFO: DISCHARGING -> CHARGING\r\n");
 		} else {
-			printf("WARN: Transition %02x -> %02x!\r\n", status_old, status);
-			printf("WARN: Maybe battery is not connected?\r\n");
+			pr_debug("WARN: Transition %02x -> %02x!\r\n", status_old, status);
+			pr_debug("WARN: Maybe battery is not connected?\r\n");
 		}
 	}
 }
@@ -443,7 +443,7 @@ void update_memory_map(void)
 	memory_map[SBS_MEMORY_MAP_CSUM_MSB_bp] = MSB(csum);
 	memory_map[SBS_MEMORY_MAP_CSUM_LSB_bp] = LSB(csum);
 
-	printf("INFO: Voltage: %4d mV (0x%04x)\r\n", read_voltage_now(), read_voltage_now());
-	printf("INFO: Current: %4d mA (0x%04x)\r\n", read_current_now(), read_current_now());
-	printf("INFO: Timestamp: %ld\r\n", rtc_get_time());
+	pr_debug("INFO: Voltage: %4d mV (0x%04x)\r\n", read_voltage_now(), read_voltage_now());
+	pr_debug("INFO: Current: %4d mA (0x%04x)\r\n", read_current_now(), read_current_now());
+	pr_debug("INFO: Timestamp: %ld\r\n", rtc_get_time());
 }
