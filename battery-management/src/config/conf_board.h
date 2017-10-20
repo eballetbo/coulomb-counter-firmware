@@ -23,4 +23,11 @@
 #define CONF_SBS_I2C_EEPROM_ADDR		0x52
 #define CONF_SBS_I2C_EEPROM_SPEED		50000	/* 50 kHz*/
 
+/* Debug */
+#ifdef DEBUG
+#define pr_debug(...) printf( __VA_ARGS__ )
+#else
+#define pr_debug(...) do{ } while ( false )
+#endif
+
 #endif // CONF_BOARD_H
