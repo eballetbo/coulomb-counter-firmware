@@ -265,13 +265,13 @@ void update_remaining_capacity(void)
 			rem_capacity = ((voltage - CUT_OFF_VOLTAGE) * 100L / (vchg - CUT_OFF_VOLTAGE));
 			/* Handle fully charged and fully discharged cases */
 			if (voltage > vchg)
-				rem_capacity = 100;
+				rem_capacity = 99;
 			else if (voltage < CUT_OFF_VOLTAGE)
 				rem_capacity = 0;
 			/* At this point, check if rem_capacity is a valid value */
 			if (rem_capacity > 100) {
 				pr_debug("WARN: Remaining capacity out of range: %d. Setting to 100\r\n", rem_capacity);
-				rem_capacity = 100;
+				rem_capacity = 99;
 			} else if (rem_capacity < 0) {
 				pr_debug("WARN: Remaining capacity out of range: %d. Setting to 0\r\n", rem_capacity);
 				rem_capacity = 0;
@@ -279,7 +279,7 @@ void update_remaining_capacity(void)
 			pr_debug("INFO: Remaining capacity: %d (voltage estimated)\r\n", rem_capacity);
 		} else {
 			if (current_acc > millicoulombs)
-				rem_capacity = 100;
+				rem_capacity = 99;
 			else if (current_acc < 0) {
 				rem_capacity = 0;
 			} else {
@@ -287,7 +287,7 @@ void update_remaining_capacity(void)
 			}
 
 			if (rem_capacity > 100)
-				rem_capacity = 100;
+				rem_capacity = 99;
 
 			pr_debug("INFO: Remaining capacity: %d (accumulated current: %ld)\r\n", rem_capacity, current_acc);
 		}
