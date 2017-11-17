@@ -172,7 +172,7 @@ uint16_t read_cycle_count(void)
  */
 static bool is_fully_charged(void)
 {
-	#define FULLY_CHARGED_THRESHOLD	5
+	#define FULLY_CHARGED_THRESHOLD	600
 	static int threshold = 0;
 	uint16_t voltage;
 	int16_t current;
