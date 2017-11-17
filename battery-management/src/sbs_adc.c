@@ -166,24 +166,19 @@ static void adcch_current_setup(enum adcch_positive_input pos, enum adcch_negati
  */
 void do_current_sense_calibration(void)
 {
-#ifdef ENABLE_CALIBRATION
 	uint8_t i;
 
 	/* To do this we should enable the CAL signal to ground the both inputs */
 	ioport_set_pin_level(CONF_PIN_ADC_CAL, 1);
-
 	/* Wait a moment to discharge filter capacitors */
 	_delay_ms(1000);
 
 	/* Configure the ADC module to do current measurements */
 	adc_current_setup();
-	
 	/* Configure the ADC channels to read load current */
 	adcch_current_setup(ADCCH_POS_PIN0, ADCCH_POS_PIN4);
-
 	/* Enable ADC */
 	adc_enable(&ADCA);
-
 	/* Do useful conversion */
 	calib_isense->load = 0;
 	for (i = 0; i < CONFIG_ADC_AVERAGE_COUNT; i++) {
@@ -191,13 +186,10 @@ void do_current_sense_calibration(void)
 		adc_wait_for_interrupt_flag(&ADCA, ADC_CH0);
 		calib_isense->load += adc_get_signed_result(&ADCA, ADC_CH0);
 	}
-
 	calib_isense->load /= CONFIG_ADC_AVERAGE_COUNT;
-	/* printf("DEBUG: ISENSE LOAD ADC calibration value: %d\n\r", calib_isense->batt); */
 
 	/* Configure the ADC channels to read battery current */
 	adcch_current_setup(ADCCH_POS_PIN1, ADCCH_POS_PIN4);
-
 	/* Do useful conversion */
 	calib_isense->batt = 0;
 	for (i = 0; i < CONFIG_ADC_AVERAGE_COUNT; i++) {
@@ -205,16 +197,12 @@ void do_current_sense_calibration(void)
 		adc_wait_for_interrupt_flag(&ADCA, ADC_CH0);
 		calib_isense->batt += adc_get_signed_result(&ADCA, ADC_CH0);
 	}
-
 	calib_isense->batt /= CONFIG_ADC_AVERAGE_COUNT;
-	/* printf("DEBUG: ISENSE BATT ADC calibration value: %d\n\r", calib_isense->batt); */
 
 	/* Disable ADC */
 	adc_disable(&ADCA);
-
 	/* Disable CAL signal */
 	ioport_set_pin_level(CONF_PIN_ADC_CAL, 0);
-#endif
 }
 
 /**
@@ -245,6 +233,7 @@ int16_t adc_get_current_now(void)
 		load_result += adc_get_signed_result(&ADCA, ADC_CH0);
 	}
 	load_result /= CONFIG_ADC_AVERAGE_COUNT;
+	load_result -= calib_isense->load;
 
 	/* Configure the ADC channels to read battery current */
 	adcch_current_setup(CONFIG_ADC_CURRENT_BATT, CONFIG_ADC_CURRENT_ZERO);
@@ -257,6 +246,7 @@ int16_t adc_get_current_now(void)
 		batt_result += adc_get_signed_result(&ADCA, ADC_CH0);
 	}
 	batt_result /= CONFIG_ADC_AVERAGE_COUNT;
+	batt_result -= calib_isense->batt;
 
 	/* Disable ADC */
 	adc_disable(&ADCA);
