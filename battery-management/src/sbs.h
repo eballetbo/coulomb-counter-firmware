@@ -46,7 +46,7 @@
 #ifndef SBS_H_
 #define SBS_H_
 
-#define _VERSION_	2
+#define _VERSION_	3
 
 void update_voltage_now(void);
 void update_current_now(void);
