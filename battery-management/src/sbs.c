@@ -305,12 +305,13 @@ void update_remaining_capacity(void)
  */
 void update_battery_status(void)
 {
-	uint16_t status, status_old, capacity;
+	uint16_t status, status_old, capacity, cycle_count;
 	int16_t current;
 
 	mm_read(SBS_BATTERY_STATUS, &status_old, sizeof(uint16_t));
 	mm_read(SBS_CURRENT_NOW, &current, sizeof(int16_t));
 	mm_read(SBS_PACK_CAPACITY, &capacity, sizeof(uint16_t));
+	mm_read(SBS_CYCLE_COUNT, &cycle_count, sizeof(uint16_t));
 
 	if (is_fully_charged()) {
 		status = FULLY_CHARGED;
@@ -379,6 +380,8 @@ void update_battery_status(void)
 			 */
 			pr_debug("INFO: CHARGING -> FULLY_CHARGED\r\n");
 			time_to_full = rtc_get_time(); /* Store the time to reach the fully charged state */
+			cycle_count = cycle_count + 1;
+			mm_write(SBS_CYCLE_COUNT, &cycle_count, sizeof(uint16_t));
 		} else if ((status_old == CHARGING) && (status == DISCHARGING)) {
 			/*
 			 * CHARGING -> DISCHARGING

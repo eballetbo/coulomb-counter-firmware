@@ -63,11 +63,11 @@
 #define SBS_MANUFACTURER_NAME		0x20	/* Manufacturer name, 16 bytes */
 #define SBS_MODEL_NAME				0x30	/* Model name, 16 bytes */
 #define SBS_DEVICE_CHEMISTRY		0x40	/* Device chemistry, 5 bytes */
-#define SBS_CYCLE_COUNT				0x50	/* Cycle count, 2 bytes */
 #define SBS_VOLTAGE_NOW				0x70	/* Voltage now, 2 bytes */
 #define SBS_CURRENT_NOW				0x72	/* Current now, 2 bytes */
 #define SBS_BATTERY_STATUS			0x74	/* Battery Status, 2 bytes */
 #define SBS_STATE_OF_CHARGE			0x76	/* State of Charge in percentage, 1 byte */
+#define SBS_CYCLE_COUNT				0x77	/* Cycle count, 2 bytes */
 #define SBS_FIRMWARE_VERSION		0x7d	/* Firmware version, 1 byte */
 
 extern volatile uint8_t memory_map[SBS_MEMORY_MAP_SIZE];
