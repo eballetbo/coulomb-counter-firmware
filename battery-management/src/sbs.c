@@ -68,9 +68,9 @@ static uint32_t time_to_full = 0;
 
 /*
  * Flag to indicate that the current battery state is not known so we do
- * a voltage estimation for capacity.
+ * a estimation for capacity.
  */
-static bool voltage_estimation = true;
+static bool capacity_estimation = true;
 
 /**
  * \brief Update the voltage value in memory map.
@@ -247,7 +247,7 @@ static bool is_fully_discharged(void)
 void update_remaining_capacity(void)
 {
 	uint8_t state, rem_capacity;
-	uint16_t voltage, vchg;
+	uint16_t capacity;
 
 	mm_read(SBS_BATTERY_STATUS, &state, sizeof(uint8_t));
 
@@ -256,25 +256,14 @@ void update_remaining_capacity(void)
 	} else if (state == FULLY_DISCHARGED) {
 		rem_capacity = 0;
 	} else { /* At this point battery is charging or discharging */
-		if (voltage_estimation) {
-			mm_read(SBS_VOLTAGE_NOW, &voltage, sizeof(uint16_t));
-			mm_read(SBS_CHARGING_VOLTAGE, &vchg, sizeof(uint16_t));
-			vchg -= 125L;	/* for safety, max. charge voltage - 125 mV */
-
-			/* Linear approximation */
-			rem_capacity = ((voltage - CUT_OFF_VOLTAGE) * 100L / (vchg - CUT_OFF_VOLTAGE));
-			/* Handle fully charged and fully discharged cases */
-			if (voltage > vchg)
-				rem_capacity = 99;
-			else if (voltage < CUT_OFF_VOLTAGE)
-				rem_capacity = 0;
-			/* At this point, check if rem_capacity is in a valid range */
-			if (rem_capacity > 99)
-				rem_capacity = 99;
-			else if (rem_capacity < 0)
-				rem_capacity = 0;
-
-			pr_debug("INFO: Remaining capacity: %d (voltage estimated)\r\n", rem_capacity);
+		if (capacity_estimation) {
+			/* Assume that battery is 50% charged the first time */
+			mm_read(SBS_PACK_CAPACITY, &capacity, sizeof(uint16_t));
+			millicoulombs = (capacity * 70L / 100L) * 3600L;
+			current_acc = millicoulombs / 2L;
+			rem_capacity = 50;
+			capacity_estimation = false;
+			pr_debug("INFO: Remaining capacity: %d (estimated)\r\n", rem_capacity);
 		} else {
 			if (current_acc > millicoulombs)
 				rem_capacity = 99;
@@ -315,11 +304,9 @@ void update_battery_status(void)
 
 	if (is_fully_charged()) {
 		status = FULLY_CHARGED;
-		/* TODO: re-calc coulombs */
 		millicoulombs = (capacity * 70L / 100L) * 3600L;
 		current_acc = millicoulombs;
 		pr_debug("Total Battery Energy: %ld\r\n", millicoulombs);
-		voltage_estimation = false;
 	} else if (is_fully_discharged()) {
 		status = FULLY_DISCHARGED;
 		/* TODO: re-calc coulombs */
